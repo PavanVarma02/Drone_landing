@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 
 # from PnP_using_polygon import centers_2D
 
-# Connect to CoppeliaSim
+
 print("Connecting to CoppeliaSim...")
-# client = RemoteAPIClient()
+
 client = RemoteAPIClient(port=23000)
 sim = client.getObject('sim')
 print("Connected.")
@@ -21,7 +21,7 @@ predicted = []
 vx_p_history = []
 time_history = []
 start_time = time.time()
-# Start simulation
+
 sim.startSimulation()
 time.sleep(0.5)
 
@@ -45,12 +45,12 @@ try:
             self.kf.measurementNoiseCov = np.eye(2, dtype=np.float32) * 1e-1
 
         def update(self, coordX, coordY):
-            """Update step with measured coordinates"""
+            
             measured = np.array([[np.float32(coordX)], [np.float32(coordY)]])
             self.kf.correct(measured)
 
         def predict(self, coordX, coordY):
-            """Predict next state"""
+            
             predicted = self.kf.predict()
             x, y = int(predicted[0].item()), int(predicted[1].item())
             return x, y
@@ -139,7 +139,7 @@ try:
             sim.setJointTargetVelocity(motorLeft, vLeft)
             sim.setJointTargetVelocity(motorRight, vRight)
 
-            # --- Vision Sensor Stream Live ---
+            
             # img_data = sim.getVisionSensorImage(camera)
             # res = sim.getVisionSensorResolution(camera)
             # Get image and resolution using the new method
@@ -230,7 +230,7 @@ try:
                                 else:
                                     k_px = 0.0003;
                                     k_py = 0.0003
-                                # (Apply similar thresholds for dy if needed, or use symmetric k_px/k_py as above)
+                                
                                 k_dx = k_dy = 0.0002
                                 k_ix = k_iy = 0.0001
 
@@ -240,7 +240,7 @@ try:
 
 
                             elif 1.5 < drone_pos[2] <= 3:
-                                # Mid altitude phase: increase Kp for responsiveness, with higher Kd for damping
+                                
                                 if abs(dx) < 30 or abs(dy) < 30:
                                     landing_rate_1 = 0.1
                                 else:
@@ -266,7 +266,7 @@ try:
 
 
                             elif 0.8 < drone_pos[2] < 1.5:
-                                # Low altitude phase: reduce Kp as marker fills view, avoid overshoot
+                                
                                 if abs(dx) < 15 or abs(dy) < 15:
                                     landing_rate_1 = 0.08
                                 else:
@@ -292,10 +292,10 @@ try:
 
 
                             elif 0.5 < drone_pos[2] < 0.8:
-                                # Final approach: very small, fixed gains for gentle alignment
+                                
                                 landing_rate = 0.05
                                 new_z = drone_pos[2] - landing_rate
-                                if abs(drone_pos[2] - 0.3) < 0.02:  # ~0.3 m height reached
+                                if abs(drone_pos[2] - 0.3) < 0.02:  
                                     new_z = 0.0  # prepare for touchdown
                                 k_px = k_py = 0.0003
                                 k_dx = k_dy = 0.0002
@@ -331,7 +331,7 @@ try:
                             print(vx,  vy )
                             vx_p_history.append(vx_p)
                             time_history.append(current_time)
-                            # Uncomment the line below to use the animation version instead:
+                            
                             # ani = animate_version()
                             new_x = drone_pos[0] + vx
                             new_y = drone_pos[1] + vy
@@ -346,10 +346,10 @@ try:
                             # if abs(dx)<= landing_threshold_xy:
                             #
                             #     sim.setObjectPosition(drone, sim.handle_world, [new_x, new_y, new_z])
-                            # Update drone position
+                            
                             sim.setObjectPosition(drone, sim.handle_world, [new_x, new_y, new_z])
-                            # ---------- LANDING CONTROL ----------
-                            # If close to marker (dx, dy small), allow descent
+                            
+                            
 
                             cv2.imshow('Vision Sensor Stream', img_array)
                 else:
@@ -387,7 +387,7 @@ try:
         #
         # plot_vx_p_results()
 
-    # Stop the robot
+    
     sim.setJointTargetVelocity(motorLeft, 0)
     sim.setJointTargetVelocity(motorRight, 0)
     time.sleep(1)
@@ -403,4 +403,5 @@ finally:
     sim.stopSimulation()
     print("Simulation stopped.")
     # if len(vx_p_history) > 0:
+
     #     plot_vx_p_results()
